@@ -413,7 +413,7 @@ function ik(a, b, l1, l2, side) {
   return [a[0] + Math.cos(w) * l1, a[1] + Math.sin(w) * l1];
 }
 
-const pt = (p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`;
+const pt = (p) => `${p[0].toFixed(2)} ${p[1].toFixed(2)}`;
 
 /** Ground silhouette that repeats every 600 units, drawn over 1200. */
 function hillPath(base, waves) {
@@ -421,7 +421,7 @@ function hillPath(base, waves) {
   for (let x = 0; x <= 1200; x += 10) {
     let y = base;
     waves.forEach(([amp, k, phase]) => { y += amp * Math.sin((2 * Math.PI * k * x) / 600 + phase); });
-    d += ` L${x} ${y.toFixed(1)}`;
+    d += ` L${x} ${y.toFixed(2)}`;
   }
   return `${d} L1200 ${SC.H} Z`;
 }
@@ -748,7 +748,7 @@ function setPerson(el, p, P) {
   el(`${p}hl`).setAttribute('transform', 'translate(-3.5 0)');
   if (o.apron) el(`${p}apron`).setAttribute('d', apronPath(P.hip, P.shoulder));
   el(`${p}neck`).setAttribute('d', capsule(lerpPt(P.shoulder, P.head, 0.1), lerpPt(P.shoulder, P.head, 0.75), 2.7, 2.5));
-  el(`${p}head`).setAttribute('transform', `translate(${pt(P.head)}) rotate(${(P.headTilt || 0).toFixed(1)})`);
+  el(`${p}head`).setAttribute('transform', `translate(${pt(P.head)}) rotate(${(P.headTilt || 0).toFixed(2)})`);
 
   const leg = (sfx, foot, knee, ankleIn, angIn) => {
     const ankle = ankleIn || [foot[0], foot[1] - 3];
@@ -762,7 +762,7 @@ function setPerson(el, p, P) {
       ang = 0;
       if (lift > 0.6) ang = clamp(deg(Math.atan2(ankle[1] - knee[1], ankle[0] - knee[0])) - 90, -30, 55) * 0.6 + lift * 1.6;
     }
-    el(`${p}fo${sfx}`).setAttribute('transform', `translate(${pt(ankle)}) rotate(${ang.toFixed(1)}) translate(0 3)`);
+    el(`${p}fo${sfx}`).setAttribute('transform', `translate(${pt(ankle)}) rotate(${ang.toFixed(2)}) translate(0 3)`);
   };
   leg('2', P.foot2, P.knee2, P.ankle2, P.footAng2);
   leg('', P.foot, P.knee, P.ankle, P.footAng);
@@ -770,8 +770,8 @@ function setPerson(el, p, P) {
   const arm = (sfx, elbow, hand) => {
     el(`${p}ua${sfx}`).setAttribute('d', capsule(P.shoulder, elbow, 3.4, 2.7));
     el(`${p}la${sfx}`).setAttribute('d', capsule(elbow, hand, 2.7, 2.1));
-    el(`${p}hd${sfx}`).setAttribute('cx', hand[0].toFixed(1));
-    el(`${p}hd${sfx}`).setAttribute('cy', hand[1].toFixed(1));
+    el(`${p}hd${sfx}`).setAttribute('cx', hand[0].toFixed(2));
+    el(`${p}hd${sfx}`).setAttribute('cy', hand[1].toFixed(2));
   };
   arm('2', P.elbow2, P.hand2);
   arm('', P.elbow, P.hand);
@@ -974,7 +974,7 @@ function cheeks(root, c) {
 function wheelSvg(id, x) {
   const spokes = Array.from({ length: 8 }, (_, i) => {
     const w = (i * Math.PI) / 4;
-    return `M0 0 L${(Math.cos(w) * 18).toFixed(1)} ${(Math.sin(w) * 18).toFixed(1)}`;
+    return `M0 0 L${(Math.cos(w) * 18).toFixed(2)} ${(Math.sin(w) * 18).toFixed(2)}`;
   }).join(' ');
   return `
     <g transform="translate(${x} 0)">
@@ -1361,7 +1361,7 @@ const FIGURES = {
       let soaked = 0;
       if (gag === 'rain') {
         const carX = lerp(520, -520, clamp((gt - 2.6) / 1.4, 0, 1));
-        el('car').setAttribute('transform', `translate(${carX.toFixed(1)} 0) scale(1.55)`);
+        el('car').setAttribute('transform', `translate(${carX.toFixed(2)} 0) scale(1.55)`);
         el('puddle').setAttribute('rx', '24');
         if (gt >= 3.2 && !this.splashed) { this.splashed = true; this._splash(); }
         if (gt < 3.0) this.splashed = false;
@@ -1406,13 +1406,13 @@ const FIGURES = {
       el('frost-frame').setAttribute('opacity', gag === 'cold' ? '0.8' : '0');
       this._iceStep(el, c, gag === 'cold');
       el('sneeze').setAttribute('opacity', gag === 'cold' && gt > 6.1 && gt < 7.5 ? '1' : '0');
-      el('sneeze').setAttribute('transform', `translate(${(head[0] + 16).toFixed(1)} ${(head[1] - 14).toFixed(1)})`);
+      el('sneeze').setAttribute('transform', `translate(${(head[0] + 16).toFixed(2)} ${(head[1] - 14).toFixed(2)})`);
       el('sneeze-t').textContent = c.lang === 'de' ? 'Hatschi!' : 'Achoo!';
 
       // ----- heat: sweat puddle, then water over the head -----
       if (gag === 'hot') {
         this.puddle = Math.min(30, this.puddle + c.dt * 3.2);
-        el('puddle').setAttribute('rx', this.puddle.toFixed(1));
+        el('puddle').setAttribute('rx', this.puddle.toFixed(2));
         const CAGE = [16, -8];
         const above = [head[0] + 4, head[1] - 20];
         if (gt >= 3.6 && gt < 8.6) {
@@ -1461,18 +1461,18 @@ const FIGURES = {
         kneeN = ik(hipD, ankleN, LEG.thigh * PS, LEG.shin * PS, 1);
         kneeF = ik(hipD, ankleF, LEG.thigh * PS, LEG.shin * PS, 1);
       }
-      el('f-spk-r').setAttribute('transform', `rotate(${deg(this.wheel).toFixed(1)})`);
-      el('f-spk-f').setAttribute('transform', `rotate(${deg(this.wheel).toFixed(1)})`);
+      el('f-spk-r').setAttribute('transform', `rotate(${deg(this.wheel).toFixed(2)})`);
+      el('f-spk-f').setAttribute('transform', `rotate(${deg(this.wheel).toFixed(2)})`);
       line(el, 'f-crank', bb, near.pedal);
       line(el, 'f-crank2', bb, far.pedal);
-      el('f-ped').setAttribute('cx', near.pedal[0].toFixed(1));
-      el('f-ped').setAttribute('cy', near.pedal[1].toFixed(1));
-      el('f-ped2').setAttribute('cx', far.pedal[0].toFixed(1));
-      el('f-ped2').setAttribute('cy', far.pedal[1].toFixed(1));
+      el('f-ped').setAttribute('cx', near.pedal[0].toFixed(2));
+      el('f-ped').setAttribute('cy', near.pedal[1].toFixed(2));
+      el('f-ped2').setAttribute('cx', far.pedal[0].toFixed(2));
+      el('f-ped2').setAttribute('cy', far.pedal[1].toFixed(2));
 
       el('bottle-c').style.opacity = bottleIn ? '0' : '1';
       el('bottle-h').style.opacity = bottleIn ? '1' : '0';
-      el('bottle-h').setAttribute('transform', `translate(${pt(handN)}) rotate(${bottleRot.toFixed(1)})`);
+      el('bottle-h').setAttribute('transform', `translate(${pt(handN)}) rotate(${bottleRot.toFixed(2)})`);
 
       const elbowN = ik(shoulder, handN, 14 * PS, 13 * PS, -1);
       const elbowF = ik(shoulder, handF, 14 * PS, 13 * PS, -1);
@@ -1504,7 +1504,7 @@ const FIGURES = {
       if (helmetFly) {
         // On the handlebar it travels with the bike.
         const hx = helmetFly[0] + (walkBeside && fly ? fly[0] : 0);
-        el('helmet-fly').setAttribute('transform', `translate(${hx.toFixed(1)} ${helmetFly[1].toFixed(1)}) rotate(${(helmetFly[2] || 0).toFixed(0)})`);
+        el('helmet-fly').setAttribute('transform', `translate(${hx.toFixed(2)} ${helmetFly[1].toFixed(2)}) rotate(${(helmetFly[2] || 0).toFixed(0)})`);
       }
       const mouth = el('b-mouth');
       mouth.setAttribute('d', mouthO ? 'M5.4 3.4 a1.4 1.8 0 1 0 0.01 0 Z' : 'M5 4.6 Q6.2 4.9 7.2 4.3');
@@ -1518,7 +1518,7 @@ const FIGURES = {
       // Whole bike: wheelie, being blown away, pushed back in.
       const wh = this.wheelie * (14 + Math.sin(c.t * 3.1) * 2.5);
       const fx = fly || [0, 0, 0];
-      el('b-fly').setAttribute('transform', `translate(${fx[0].toFixed(1)} ${fx[1].toFixed(1)}) rotate(${(fx[2] - wh).toFixed(1)} -30 21)`);
+      el('b-fly').setAttribute('transform', `translate(${fx[0].toFixed(2)} ${fx[1].toFixed(2)}) rotate(${(fx[2] - wh).toFixed(2)} -30 21)`);
       if (el('fig-sh')) el('fig-sh').style.opacity = fly && (fx[1] < -2 || fx[0] < -20) ? '0' : '';
       this.head = [head[0] + fx[0], head[1] + fx[1]];
     },
@@ -1557,9 +1557,9 @@ const FIGURES = {
         d.x += d.vx * c.dt;
         d.y += d.vy * c.dt;
         if (d.y > 21) { d.y = 21; d.vy = 0; d.vx *= 0.3; }
-        d.el.setAttribute('cx', d.x.toFixed(1));
-        d.el.setAttribute('cy', d.y.toFixed(1));
-        d.el.setAttribute('r', d.r.toFixed(1));
+        d.el.setAttribute('cx', d.x.toFixed(2));
+        d.el.setAttribute('cy', d.y.toFixed(2));
+        d.el.setAttribute('r', d.r.toFixed(2));
         d.el.style.opacity = (0.85 * (1 - d.age)).toFixed(2);
       });
       const wv = el('wave');
@@ -1567,7 +1567,7 @@ const FIGURES = {
         this.waveT += c.dt / 0.75;
         const k = this.waveT;
         const h = Math.sin(Math.min(1, k * 1.4) * Math.PI * 0.5) * 115 * (1 - k * 0.5);
-        wv.setAttribute('d', `M40 21 C${(36 - k * 10).toFixed(1)} ${(21 - h * 0.9).toFixed(1)} ${(4 - k * 40).toFixed(1)} ${(21 - h * 1.1).toFixed(1)} ${(-30 - k * 50).toFixed(1)} ${(21 - h * 0.55).toFixed(1)} C${(-14 - k * 30).toFixed(1)} ${(21 - h * 0.75).toFixed(1)} ${(8 - k * 10).toFixed(1)} ${(21 - h * 0.6).toFixed(1)} 4 21 Z`);
+        wv.setAttribute('d', `M40 21 C${(36 - k * 10).toFixed(2)} ${(21 - h * 0.9).toFixed(2)} ${(4 - k * 40).toFixed(2)} ${(21 - h * 1.1).toFixed(2)} ${(-30 - k * 50).toFixed(2)} ${(21 - h * 0.55).toFixed(2)} C${(-14 - k * 30).toFixed(2)} ${(21 - h * 0.75).toFixed(2)} ${(8 - k * 10).toFixed(2)} ${(21 - h * 0.6).toFixed(2)} 4 21 Z`);
         wv.setAttribute('opacity', (0.6 * (1 - k)).toFixed(2));
       } else {
         wv.setAttribute('opacity', '0');
@@ -1587,7 +1587,7 @@ const FIGURES = {
         k.y += k.vy * c.dt;
         k.r += 600 * c.dt;
         fly.setAttribute('opacity', '1');
-        fly.setAttribute('transform', `translate(${k.x.toFixed(1)} ${k.y.toFixed(1)}) rotate(${k.r.toFixed(0)}) scale(${this.PS})`);
+        fly.setAttribute('transform', `translate(${k.x.toFixed(2)} ${k.y.toFixed(2)}) rotate(${k.r.toFixed(0)}) scale(${this.PS})`);
         if (k.y >= 20) {
           k.broke = true;
           k.shards = Array.from({ length: 5 }, (_, i) => ({ x: k.x, y: 20, vx: rnd(-50, 60), vy: rnd(-90, -30), r: rnd(0, 360), i }));
@@ -1606,7 +1606,7 @@ const FIGURES = {
         if (s.y >= 21) { s.vx *= 0.85; s.vy = 0; }
         s.r += s.vx * 3 * c.dt;
         sh.setAttribute('opacity', (1 - this.ice.t / 1.4).toFixed(2));
-        sh.setAttribute('transform', `translate(${s.x.toFixed(1)} ${s.y.toFixed(1)}) rotate(${s.r.toFixed(0)}) scale(1.4)`);
+        sh.setAttribute('transform', `translate(${s.x.toFixed(2)} ${s.y.toFixed(2)}) rotate(${s.r.toFixed(0)}) scale(1.4)`);
       }
       if (this.ice && this.ice.broke) this.ice.t += c.dt;
     },
@@ -1634,7 +1634,7 @@ const FIGURES = {
       if (!p) { bird.setAttribute('opacity', '0'); return; }
       bird.setAttribute('opacity', '1');
       const hop = flap ? 0 : Math.max(0, Math.sin(c.t * 2.3)) > 0.97 ? -2 : 0;
-      bird.setAttribute('transform', `translate(${p[0].toFixed(1)} ${(p[1] + hop).toFixed(1)}) scale(${flip ? -1.2 : 1.2} 1.2)`);
+      bird.setAttribute('transform', `translate(${p[0].toFixed(2)} ${(p[1] + hop).toFixed(2)}) scale(${flip ? -1.2 : 1.2} 1.2)`);
       el('bird-w').setAttribute('transform', flap ? `scale(1 ${Math.sin(c.t * 28).toFixed(2)})` : 'rotate(70) scale(0.6 0.5)');
       el('bird-legs').setAttribute('opacity', flap ? '0' : '1');
     },
@@ -1732,7 +1732,7 @@ const FIGURES = {
           const xb = x0 + ((x1 - x0) * (i + 1)) / n;
           const ya = lerp(y0, y1, (xa - x0) / (x1 - x0));
           const yb = lerp(y0, y1, (xb - x0) / (x1 - x0));
-          d += `M${xa.toFixed(1)} ${ya.toFixed(1)} L${((xa + xb) / 2).toFixed(1)} ${((ya + yb) / 2 + h).toFixed(1)} L${xb.toFixed(1)} ${yb.toFixed(1)} Z `;
+          d += `M${xa.toFixed(2)} ${ya.toFixed(2)} L${((xa + xb) / 2).toFixed(2)} ${((ya + yb) / 2 + h).toFixed(2)} L${xb.toFixed(2)} ${yb.toFixed(2)} Z `;
         }
         return d;
       };
@@ -2012,34 +2012,34 @@ const FIGURES = {
         const knee = ka[0] >= kb[0] ? ka : kb;
         el(`dn-th${sfx}`).setAttribute('d', capsule(hip, knee, 8, 5));
         el(`dn-sh${sfx}`).setAttribute('d', capsule(knee, ankle, 4.6, 3));
-        el(`dn-fo${sfx}`).setAttribute('transform', `translate(${pt(ankle)}) rotate(${(f[1] < 0 ? clamp(-f[1] * 2, 0, 25) : 0).toFixed(1)})`);
+        el(`dn-fo${sfx}`).setAttribute('transform', `translate(${pt(ankle)}) rotate(${(f[1] < 0 ? clamp(-f[1] * 2, 0, 25) : 0).toFixed(2)})`);
       };
       leg('2', [4, -38 - bob], this.dPh + 0.5);
       leg('', [-2, -38 - bob], this.dPh);
 
       const y = -(this.terrain(this.s + x * this.scale) - this.terrain(this.s)) / this.scale;
       root.setAttribute('opacity', '1');
-      root.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(flip ? -sc : sc).toFixed(3)} ${sc.toFixed(3)})`);
-      el('dn-up').setAttribute('transform', `translate(0 ${(-bob).toFixed(1)}) rotate(${lean.toFixed(1)} 0 -38)`);
-      el('dn-head').setAttribute('transform', `rotate(${head.toFixed(1)} 16 -68)`);
-      el('dn-jaw').setAttribute('transform', `rotate(${jaw.toFixed(1)} 16 -70)`);
+      root.setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${(flip ? -sc : sc).toFixed(3)} ${sc.toFixed(3)})`);
+      el('dn-up').setAttribute('transform', `translate(0 ${(-bob).toFixed(2)}) rotate(${lean.toFixed(2)} 0 -38)`);
+      el('dn-head').setAttribute('transform', `rotate(${head.toFixed(2)} 16 -68)`);
+      el('dn-jaw').setAttribute('transform', `rotate(${jaw.toFixed(2)} 16 -70)`);
       const jr = (p) => rotAround(p, [16, -70], jaw);
       el('dn-mouth').setAttribute('d', `M16 -70 L53 -74.6 L${pt(jr([52, -73.2]))} L${pt(jr([34, -71.8]))} Z`);
-      el('dn-tail').setAttribute('transform', `rotate(${tail.toFixed(1)} -16 -52)`);
-      el('dn-arm').setAttribute('transform', `rotate(${arm.toFixed(1)} 16 -52)`);
+      el('dn-tail').setAttribute('transform', `rotate(${tail.toFixed(2)} -16 -52)`);
+      el('dn-arm').setAttribute('transform', `rotate(${arm.toFixed(2)} 16 -52)`);
       el('dn-brow').setAttribute('d', brow);
       el('dn-pupil').setAttribute('r', String(pupil));
       el('dn-roar').setAttribute('opacity', roar ? (0.5 + 0.5 * Math.sin(t * 30)).toFixed(2) : '0');
       el('dn-tear').setAttribute('opacity', tear >= 0 ? (1 - tear).toFixed(2) : '0');
-      el('dn-tear').setAttribute('transform', `translate(0 ${(Math.max(0, tear) * 12).toFixed(1)})`);
+      el('dn-tear').setAttribute('transform', `translate(0 ${(Math.max(0, tear) * 12).toFixed(2)})`);
       // Dust when it skids to a stop.
       for (let i = 0; i < 4; i += 1) {
         const f = clamp((et - 6.95 - i * 0.08) / 0.8, 0, 1);
         const d = el(`dn-dust${i}`);
         d.setAttribute('opacity', f > 0 && f < 1 ? ((1 - f) * 0.55).toFixed(2) : '0');
-        d.setAttribute('cx', (-4 - i * 9 - f * 12).toFixed(1));
-        d.setAttribute('cy', (-3 - f * 7).toFixed(1));
-        d.setAttribute('r', (3 + f * 6).toFixed(1));
+        d.setAttribute('cx', (-4 - i * 9 - f * 12).toFixed(2));
+        d.setAttribute('cy', (-3 - f * 7).toFixed(2));
+        d.setAttribute('r', (3 + f * 6).toFixed(2));
       }
     },
 
@@ -2148,7 +2148,7 @@ const FIGURES = {
       if (rootX > -60 && rootX < 220) {
         el('wk-root').setAttribute('opacity', '1');
         const ry = -(this.terrain(rootEv.at) - this.terrain(this.s)) / this.scale;
-        el('wk-root').setAttribute('transform', `translate(${rootX.toFixed(1)} ${ry.toFixed(1)})`);
+        el('wk-root').setAttribute('transform', `translate(${rootX.toFixed(2)} ${ry.toFixed(2)})`);
       }
       if (ev === 'trip') {
         hold = false;
@@ -2247,7 +2247,7 @@ const FIGURES = {
       const benchEv = this.events.find((x) => x.ev === 'bench');
       const benchX = (benchEv.at - this.s) / this.scale;
       el('wk-bench').setAttribute('opacity', benchX > -120 && benchX < 260 ? '1' : '0');
-      el('wk-bench').setAttribute('transform', `translate(${benchX.toFixed(1)} ${(-(this.terrain(benchEv.at) - this.terrain(this.s)) / this.scale).toFixed(1)})`);
+      el('wk-bench').setAttribute('transform', `translate(${benchX.toFixed(2)} ${(-(this.terrain(benchEv.at) - this.terrain(this.s)) / this.scale).toFixed(2)})`);
       let zzz = 0;
       if (ev === 'bench') {
         const k = (x0, x1) => ease(clamp((et - x0) / (x1 - x0), 0, 1));
@@ -2290,7 +2290,7 @@ const FIGURES = {
         void FF;
       }
       el('wk-zzz').setAttribute('opacity', (zzz * (0.6 + 0.4 * Math.sin(t * 3))).toFixed(2));
-      el('wk-zzz').setAttribute('transform', `translate(${(M.head[0] + 6).toFixed(1)} ${(M.head[1] - 12 - ((t * 6) % 6)).toFixed(1)})`);
+      el('wk-zzz').setAttribute('transform', `translate(${(M.head[0] + 6).toFixed(2)} ${(M.head[1] - 12 - ((t * 6) % 6)).toFixed(2)})`);
 
       // ---------- selfie ----------
       let phone = false;
@@ -2356,9 +2356,9 @@ const FIGURES = {
         if (gt >= 8.6 && gt < 9.8) mouthF = 'laugh';
       }
       el('m-toupee').setAttribute('opacity', toupeeOn ? '1' : '0');
-      el('m-toupee').setAttribute('transform', `rotate(${toupeeRot.toFixed(1)} -6 -4.5)`);
+      el('m-toupee').setAttribute('transform', `rotate(${toupeeRot.toFixed(2)} -6 -4.5)`);
       el('tp-fly').setAttribute('opacity', tpFly ? '1' : '0');
-      if (tpFly) el('tp-fly').setAttribute('transform', `translate(${tpFly[0].toFixed(1)} ${tpFly[1].toFixed(1)}) rotate(${tpFly[2].toFixed(0)})`);
+      if (tpFly) el('tp-fly').setAttribute('transform', `translate(${tpFly[0].toFixed(2)} ${tpFly[1].toFixed(2)}) rotate(${tpFly[2].toFixed(0)})`);
 
       // Rain: the gentleman and the puddle.
       let umb = null;
@@ -2444,7 +2444,7 @@ const FIGURES = {
         mouthM = gt > 6 ? 'frown' : 'calm';
       }
       el('wk-umb').setAttribute('opacity', umb ? '1' : '0');
-      if (umb) el('wk-umb').setAttribute('transform', `translate(${pt(umb[0])}) rotate(${umb[1].toFixed(1)})`);
+      if (umb) el('wk-umb').setAttribute('transform', `translate(${pt(umb[0])}) rotate(${umb[1].toFixed(2)})`);
       el('m-nose').setAttribute('opacity', (nose * 0.95).toFixed(2));
       el('m-glow').setAttribute('opacity', (nose * (0.25 + 0.2 * Math.sin(t * 4))).toFixed(2));
 
@@ -2473,7 +2473,7 @@ const FIGURES = {
           const from = this._fromF([F.hand[0], F.hand[1] - 2]);
           const to = [M.head[0] + 7, M.head[1] + 2];
           el('wk-scoop').setAttribute('opacity', '1');
-          el('wk-scoop').setAttribute('transform', `translate(${lerp(from[0], to[0], f).toFixed(1)} ${(lerp(from[1], to[1], f) - Math.sin(f * Math.PI) * 14).toFixed(1)})`);
+          el('wk-scoop').setAttribute('transform', `translate(${lerp(from[0], to[0], f).toFixed(2)} ${(lerp(from[1], to[1], f) - Math.sin(f * Math.PI) * 14).toFixed(2)})`);
         } else el('wk-scoop').setAttribute('opacity', '0');
         if (gt >= 5.1) cream = 1 - k(8.4, 9.4);
         if (gt >= 5.1 && gt < 6.0) mouthM = 'open';
@@ -2495,15 +2495,15 @@ const FIGURES = {
       if (hold) handsMeet();
 
       // Ponytail swings with the steps.
-      el('f-pony').setAttribute('transform', `rotate(${(Math.sin(this.phF * Math.PI * 4) * 6 * wW - (gag === 'wind' ? 25 + Math.sin(t * 9) * 8 : 0)).toFixed(1)} -6.6 -2)`);
+      el('f-pony').setAttribute('transform', `rotate(${(Math.sin(this.phF * Math.PI * 4) * 6 * wW - (gag === 'wind' ? 25 + Math.sin(t * 9) * 8 : 0)).toFixed(2)} -6.6 -2)`);
       this._mouth(el, 'm-', mouthM);
       this._mouth(el, 'f-', mouthF);
       setPerson(el, 'f-', F);
       setPerson(el, 'm-', M);
       const yAt = (x) => -(this.terrain(this.s + x * this.scale) - this.terrain(this.s)) / this.scale;
       el('wk-m').setAttribute('transform', manOff || manFlip || jump
-        ? `translate(${manOff.toFixed(1)} ${(yAt(manOff) + jump).toFixed(1)})${manFlip ? ' scale(-1 1)' : ''}` : '');
-      el('wk-f').setAttribute('transform', `translate(${this.FX} ${(this.FY + jump).toFixed(1)}) scale(${femFlip ? -this.FS : this.FS} ${this.FS})`);
+        ? `translate(${manOff.toFixed(2)} ${(yAt(manOff) + jump).toFixed(2)})${manFlip ? ' scale(-1 1)' : ''}` : '');
+      el('wk-f').setAttribute('transform', `translate(${this.FX} ${(this.FY + jump).toFixed(2)}) scale(${femFlip ? -this.FS : this.FS} ${this.FS})`);
       // Looking back over the shoulder: the head turns round.
       if (lookM) el('m-head').setAttribute('transform', `${el('m-head').getAttribute('transform')} scale(-1 1)`);
       if (lookF) el('f-head').setAttribute('transform', `${el('f-head').getAttribute('transform')} scale(-1 1)`);
@@ -2532,8 +2532,8 @@ const FIGURES = {
         d.vy += 380 * c.dt;
         d.x += d.vx * c.dt;
         d.y = Math.min(0, d.y + d.vy * c.dt);
-        d.el.setAttribute('cx', d.x.toFixed(1));
-        d.el.setAttribute('cy', d.y.toFixed(1));
+        d.el.setAttribute('cx', d.x.toFixed(2));
+        d.el.setAttribute('cy', d.y.toFixed(2));
         d.el.style.opacity = (0.85 * (1 - d.age)).toFixed(2);
       });
     },
@@ -2585,9 +2585,9 @@ const FIGURES = {
           f.r = rnd(1.5, 3.5);
         }
         f.x -= vx * c.dt;
-        f.el.setAttribute('cx', f.x.toFixed(1));
-        f.el.setAttribute('cy', (f.y + f.age * 3).toFixed(1));
-        f.el.setAttribute('r', (f.r * (1 + f.age * 1.5)).toFixed(1));
+        f.el.setAttribute('cx', f.x.toFixed(2));
+        f.el.setAttribute('cy', (f.y + f.age * 3).toFixed(2));
+        f.el.setAttribute('r', (f.r * (1 + f.age * 1.5)).toFixed(2));
         f.el.style.opacity = (c.pace * 0.75 * (1 - f.age)).toFixed(2);
       });
     },
@@ -2634,13 +2634,13 @@ const FIGURES = {
       const flap = calm ? Math.sin(c.t * 3.1) * 4 * calm : 0;
       const belly = (6 + wind * 0.45) * (1 - calm * 0.85) + Math.sin(c.t * 7) * (0.4 + wind * 0.02) + flap;
       const top = lerp(-96, -58, this.reef);
-      el('main').setAttribute('d', `M3 ${top.toFixed(1)} L3 -10 L-35 -10 Q${(-14 - belly).toFixed(1)} ${((top - 10) / 2).toFixed(1)} 3 ${top.toFixed(1)} Z`);
-      el('main-sh').setAttribute('d', `M3 ${top.toFixed(1)} L3 -10 L-8 -10 Q${(-3 - belly * 0.35).toFixed(1)} ${((top - 10) / 2).toFixed(1)} 3 ${top.toFixed(1)} Z`);
-      el('jib').setAttribute('d', `M3 -86 L42 -4 L10 -6 Q${(4 - belly * 0.5).toFixed(1)} -40 3 -86 Z`);
+      el('main').setAttribute('d', `M3 ${top.toFixed(2)} L3 -10 L-35 -10 Q${(-14 - belly).toFixed(2)} ${((top - 10) / 2).toFixed(2)} 3 ${top.toFixed(2)} Z`);
+      el('main-sh').setAttribute('d', `M3 ${top.toFixed(2)} L3 -10 L-8 -10 Q${(-3 - belly * 0.35).toFixed(2)} ${((top - 10) / 2).toFixed(2)} 3 ${top.toFixed(2)} Z`);
+      el('jib').setAttribute('d', `M3 -86 L42 -4 L10 -6 Q${(4 - belly * 0.5).toFixed(2)} -40 3 -86 Z`);
       el('jib').style.opacity = (1 - this.reef).toFixed(2);
       this.head = [-18, -12 + bob];
       const fl = Math.sin(c.t * (6 + wind * 0.25)) * 2.5;
-      el('flag').setAttribute('d', `M2 -98 L-12 ${(-96 + fl).toFixed(1)} L2 -92 Z`);
+      el('flag').setAttribute('d', `M2 -98 L-12 ${(-96 + fl).toFixed(2)} L2 -92 Z`);
     },
   },
 
@@ -2723,10 +2723,10 @@ const FIGURES = {
       el('ball').setAttribute('transform', `translate(${pt(b)})`);
       el('ball').style.opacity = opacity.toFixed(2);
       el('ball-spin').setAttribute('transform', `rotate(${spin.toFixed(0)})`);
-      el('ball-sh').setAttribute('cx', b[0].toFixed(1));
+      el('ball-sh').setAttribute('cx', b[0].toFixed(2));
       el('ball-sh').setAttribute('cy', '0.5');
       el('ball-sh').style.opacity = (opacity * 0.3 * clamp(1 + b[1] / 60, 0.2, 1)).toFixed(2);
-      el('net').setAttribute('transform', `translate(${bulge.toFixed(1)} 0)`);
+      el('net').setAttribute('transform', `translate(${bulge.toFixed(2)} 0)`);
     },
   },
 
@@ -2748,7 +2748,7 @@ const FIGURES = {
     build() {
       const bars = Array.from({ length: 12 }, (_, i) => `M${9 + i * 3} -56 V-43`).join(' ');
       const flames = Array.from({ length: 8 }, (_, i) => `<path class="flame" id="fl${i}" d="M0 0 C-3 -3 -2.5 -7 0 -11 C2.5 -7 3 -3 0 0 Z"/>`).join('');
-      const embers = Array.from({ length: 9 }, (_, i) => `<circle id="em${i}" cx="${(11 + i * 3.6).toFixed(1)}" cy="${(-46.5 + (i % 3) - 1).toFixed(1)}" r="${(1.2 + (i % 2) * 0.6).toFixed(1)}" fill="#FF7A1A"/>`).join('');
+      const embers = Array.from({ length: 9 }, (_, i) => `<circle id="em${i}" cx="${(11 + i * 3.6).toFixed(2)}" cy="${(-46.5 + (i % 3) - 1).toFixed(2)}" r="${(1.2 + (i % 2) * 0.6).toFixed(2)}" fill="#FF7A1A"/>`).join('');
       const smoke = Array.from({ length: 14 }, (_, i) => `<circle class="smoke" id="sm${i}" r="4"/>`).join('');
       const sparks = Array.from({ length: 8 }, (_, i) => `<circle class="spark" id="sp${i}" r="0.8"/>`).join('');
       const steak = (i) => `
@@ -2987,7 +2987,7 @@ const FIGURES = {
       } else if (inWindow(E.lidDown, E.lidUp)) {
         lidPos = S.LID_TABLE;
       }
-      el('lid').setAttribute('transform', `translate(${pt(lidPos)}) rotate(${lidRot.toFixed(1)} 0 -18)`);
+      el('lid').setAttribute('transform', `translate(${pt(lidPos)}) rotate(${lidRot.toFixed(2)} 0 -18)`);
       const lidOpen = active && tau > E.lidOff + 0.4 && tau < E.lidOn - 0.2 ? 1 : 0;
       this.lidOpen = lerp(this.lidOpen || 0, lidOpen, Math.min(1, c.dt * 3));
 
@@ -3031,7 +3031,7 @@ const FIGURES = {
         el(`st${i}-m`).setAttribute('opacity', top === 'cooked' ? (0.85 * cookA).toFixed(2) : '0');
         el(`st${i}-fat`).setAttribute('stroke', top === 'cooked' ? '#E8B07A' : '#F3D3C4');
         el(`st${i}-edge`).setAttribute('fill', mix('#8E2E28', '#5A2A18', warm));
-        el(`st${i}`).setAttribute('transform', `translate(${pt(pos)}) rotate(${rot.toFixed(1)}) scale(1 ${(0.55 * Math.max(0.12, Math.abs(flip))).toFixed(3)})`);
+        el(`st${i}`).setAttribute('transform', `translate(${pt(pos)}) rotate(${rot.toFixed(2)}) scale(1 ${(0.55 * Math.max(0.12, Math.abs(flip))).toFixed(3)})`);
         el(`st${i}-f`).setAttribute('transform', flip < 0 ? 'scale(1 -1)' : '');
         flare += since(E.place[i]) + since(E.flip1[i]) * 0.8;
       }
@@ -3048,7 +3048,7 @@ const FIGURES = {
         const lick = 0.45 + 0.55 * Math.abs(Math.sin(t * (6.3 + i * 0.9) + i * 2.1));
         const h = heat * open * (0.35 + 0.25 * lick + flare * 0.9 * (0.6 + 0.4 * Math.sin(i * 1.7 + t * 9)));
         const sway = Math.sin(t * 4 + i) * 6 - clamp(c.look.wind, 0, 50) * 0.3;
-        el(`fl${i}`).setAttribute('transform', `translate(${x.toFixed(1)} -46.5) rotate(${sway.toFixed(1)}) scale(${(0.7 + 0.3 * lick).toFixed(2)} ${h.toFixed(2)})`);
+        el(`fl${i}`).setAttribute('transform', `translate(${x.toFixed(2)} -46.5) rotate(${sway.toFixed(2)}) scale(${(0.7 + 0.3 * lick).toFixed(2)} ${h.toFixed(2)})`);
       }
       if (!this.smoke) {
         this.smoke = Array.from({ length: 14 }, (_, i) => ({ el: el(`sm${i}`), age: 1, x: 0, y: 0, r: 3 }));
@@ -3077,9 +3077,9 @@ const FIGURES = {
         const a = p.age;
         p.x += (-(4 + wind * 0.9) * a + Math.sin(a * 7 + p.r) * 4) * c.dt;
         p.y -= (16 - wind * 0.18) * c.dt;
-        p.el.setAttribute('cx', p.x.toFixed(1));
-        p.el.setAttribute('cy', p.y.toFixed(1));
-        p.el.setAttribute('r', (p.r + a * 8).toFixed(1));
+        p.el.setAttribute('cx', p.x.toFixed(2));
+        p.el.setAttribute('cy', p.y.toFixed(2));
+        p.el.setAttribute('r', (p.r + a * 8).toFixed(2));
         p.el.style.opacity = ((0.24 + p.dark * 0.08) * Math.sin(Math.min(1, a * 1.3) * Math.PI) * (1 - a * 0.4)).toFixed(2);
       });
       // Fat drips into the fire and throws sparks while meat sizzles.
@@ -3093,8 +3093,8 @@ const FIGURES = {
         s.vy += 60 * c.dt;
         s.x += s.vx * c.dt;
         s.y += s.vy * c.dt;
-        s.el.setAttribute('cx', s.x.toFixed(1));
-        s.el.setAttribute('cy', s.y.toFixed(1));
+        s.el.setAttribute('cx', s.x.toFixed(2));
+        s.el.setAttribute('cy', s.y.toFixed(2));
         s.el.style.opacity = (1 - s.age).toFixed(2);
       });
     },
@@ -3109,7 +3109,7 @@ function wavePath(base, amp, k, phase, closed) {
   for (let x = 0; x <= 1200; x += 8) {
     const y = base + amp * Math.sin((2 * Math.PI * k * x) / 600 + phase)
       + amp * 0.35 * Math.sin((2 * Math.PI * (2 * k + 1) * x) / 600 + phase * 2);
-    d += `${d ? ' L' : 'M'}${x} ${y.toFixed(1)}`;
+    d += `${d ? ' L' : 'M'}${x} ${y.toFixed(2)}`;
   }
   return closed ? `${d} L1200 ${SC.H} Z` : d;
 }
@@ -3152,14 +3152,14 @@ class WeatherScene {
           <path id="road-b" fill="#1F2733"/>
           <path id="wet" fill="#5C82B0" opacity="0"/>
           <path id="road-edge" fill="none" stroke="#2E3848" stroke-width="1.5"/>
-          <path id="road-dash" fill="none" stroke="#55657F" stroke-width="2.5" stroke-dasharray="22 18"/>
+          <path id="road-dash" fill="none" stroke="#55657F" stroke-width="2.5"/>
           <path id="verge" fill="#121C16"/>`;
         }
         return `
           <rect y="${R}" width="${SC.W}" height="${SC.ROAD_H}" fill="#1F2733"/>
           <rect id="wet" y="${R}" width="${SC.W}" height="${SC.ROAD_H}" fill="#5C82B0" opacity="0"/>
           <path d="M0 ${R + 0.5} H${SC.W}" stroke="#2E3848" stroke-width="1.5"/>
-          <path id="road-dash" d="M-60 ${R + 17} H${SC.W + 60}" stroke="#55657F" stroke-width="2.5" stroke-dasharray="22 18"/>
+          <path id="road-dash" fill="none" stroke="#55657F" stroke-width="2.5"/>
           ${below}`;
       case 'path':
         if (this.figure.terrain) {
@@ -3168,14 +3168,14 @@ class WeatherScene {
           <path id="road-b" fill="#3A3229"/>
           <path id="wet" fill="#5C82B0" opacity="0"/>
           <path id="road-edge" fill="none" stroke="#4A4034" stroke-width="1.5"/>
-          <path id="road-dash" fill="none" stroke="#5E5444" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 17"/>
+          <path id="road-dash" fill="#5E5444"/>
           <path id="verge" fill="#121C16"/>`;
         }
         return `
           <rect y="${R}" width="${SC.W}" height="${SC.ROAD_H}" fill="#3A3229"/>
           <rect id="wet" y="${R}" width="${SC.W}" height="${SC.ROAD_H}" fill="#5C82B0" opacity="0"/>
           <path d="M0 ${R + 0.5} H${SC.W} M0 ${R + SC.ROAD_H - 0.5} H${SC.W}" stroke="#4A4034" stroke-width="1.5"/>
-          <path id="road-dash" d="M-60 ${R + 9} H${SC.W + 60} M-52 ${R + 22} H${SC.W + 60}" stroke="#5E5444" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 17"/>
+          <path id="road-dash" fill="#5E5444"/>
           ${below}`;
       case 'pitch': {
         const stripes = Array.from({ length: 8 }, (_, i) => `<rect x="${i * 75}" y="${SC.HORIZON + 14}" width="75" height="${SC.H - SC.HORIZON - 14}" fill="${i % 2 ? '#1D4029' : '#183722'}"/>`).join('');
@@ -3282,7 +3282,7 @@ class WeatherScene {
         <g id="sun-rays" stroke="#FFC44D" stroke-width="3" stroke-linecap="round">
           ${Array.from({ length: 12 }, (_, i) => {
     const w = (i * Math.PI) / 6;
-    return `<path d="M${(Math.cos(w) * 28).toFixed(1)} ${(Math.sin(w) * 28).toFixed(1)} L${(Math.cos(w) * 37).toFixed(1)} ${(Math.sin(w) * 37).toFixed(1)}"/>`;
+    return `<path d="M${(Math.cos(w) * 28).toFixed(2)} ${(Math.sin(w) * 28).toFixed(2)} L${(Math.cos(w) * 37).toFixed(2)} ${(Math.sin(w) * 37).toFixed(2)}"/>`;
   }).join('')}
         </g>
         <circle r="21" fill="#FFC44D"/>
@@ -3432,11 +3432,11 @@ class WeatherScene {
     this._moodFx(dt);
 
     // Parallax: far things move slowly, near things fast.
-    $('hills-far').setAttribute('transform', `translate(${(-(w * 0.06) % 600).toFixed(1)} ${(cam * 0.15).toFixed(1)})`);
+    $('hills-far').setAttribute('transform', `translate(${(-(w * 0.06) % 600).toFixed(2)} ${(cam * 0.15).toFixed(2)})`);
     if (this.env === 'water') {
       [0, 1, 2].forEach((i) => {
         const x = -((w * (0.35 + i * 0.3) + t * (5 + wind * 0.35) * (1 + i * 0.4)) % 600);
-        $(`wv${i}`).setAttribute('transform', `translate(${x.toFixed(1)} 0)`);
+        $(`wv${i}`).setAttribute('transform', `translate(${x.toFixed(2)} 0)`);
       });
       // White caps appear once the wind is strong enough.
       const capOn = clamp((wind - 18) / 25, 0, 1);
@@ -3444,17 +3444,17 @@ class WeatherScene {
         cp.age += dt / 1.6;
         if (cp.age >= 1) { cp.age -= 1; cp.x = rnd(0, 620); }
         cp.x -= (vw * (0.35 + cp.row * 0.3) + (5 + wind * 0.35) * (1 + cp.row * 0.4)) * dt;
-        cp.el.setAttribute('transform', `translate(${cp.x.toFixed(1)} ${196 + cp.row * 24 - 1})`);
+        cp.el.setAttribute('transform', `translate(${cp.x.toFixed(2)} ${196 + cp.row * 24 - 1})`);
         cp.el.style.opacity = (capOn * 0.8 * Math.sin(cp.age * Math.PI)).toFixed(2);
       });
     } else {
-      $('hills-near').setAttribute('transform', `translate(${(-(w * 0.18) % 600).toFixed(1)} ${(cam * 0.3).toFixed(1)})`);
-      if ($('road-dash')) $('road-dash').style.strokeDashoffset = (w % 40).toFixed(1);
+      $('hills-near').setAttribute('transform', `translate(${(-(w * 0.18) % 600).toFixed(2)} ${(cam * 0.3).toFixed(2)})`);
+      this._marks(w);
       const lean = -wind * 0.18;
       this.trees.forEach((tr) => {
         const x = scroll ? wrap(tr.x - w * 0.55, -70, 680) : tr.x;
         const sway = Math.sin(t * (1.4 + wind * 0.03) + tr.ph) * (0.6 + wind * 0.12);
-        tr.el.setAttribute('transform', `translate(${x.toFixed(1)} ${((this.env === 'road' || this.env === 'path' ? SC.ROAD_Y - 1 : SC.HORIZON + 4) + cam * 0.45).toFixed(1)})`);
+        tr.el.setAttribute('transform', `translate(${x.toFixed(2)} ${((this.env === 'road' || this.env === 'path' ? SC.ROAD_Y - 1 : SC.HORIZON + 4) + cam * 0.45).toFixed(2)})`);
         tr.sway.setAttribute('transform', `scale(${tr.s}) rotate(${(lean + sway).toFixed(2)})`);
       });
     }
@@ -3463,13 +3463,13 @@ class WeatherScene {
     this.clouds.forEach((c) => {
       c.x -= (3 + wind * 0.9) * dt + vw * 0.02 * dt;
       if (c.x < -90) c.x += 780;
-      c.el.setAttribute('transform', `translate(${c.x.toFixed(1)} ${c.y}) scale(${c.s})`);
+      c.el.setAttribute('transform', `translate(${c.x.toFixed(2)} ${c.y}) scale(${c.s})`);
     });
 
     // Sun rays turn slowly and grow with heat.
     const pulse = 1 + L.hot * 0.12 * Math.sin(t * 2.2);
     $('sun-rays').setAttribute('transform', `rotate(${(t * 8) % 360}) scale(${((1 + L.hot * 0.15) * pulse).toFixed(3)})`);
-    $('sun-glow').setAttribute('r', (70 + L.hot * 40 + Math.sin(t * 1.3) * 4).toFixed(1));
+    $('sun-glow').setAttribute('r', (70 + L.hot * 40 + Math.sin(t * 1.3) * 4).toFixed(2));
 
     // Rain or snow. Wind drives the slant, forward motion adds to it.
     const vx = -(wind * 5 + vw * 0.35);
@@ -3486,12 +3486,12 @@ class WeatherScene {
           p.land = rnd(this.landTop, SC.H);
         }
         if (L.snow) {
-          p.fl.setAttribute('cx', p.x.toFixed(1));
-          p.fl.setAttribute('cy', p.y.toFixed(1));
-          p.fl.setAttribute('r', p.r.toFixed(1));
+          p.fl.setAttribute('cx', p.x.toFixed(2));
+          p.fl.setAttribute('cy', p.y.toFixed(2));
+          p.fl.setAttribute('r', p.r.toFixed(2));
         } else {
           const k = 0.026;
-          p.el.setAttribute('d', `M${p.x.toFixed(1)} ${p.y.toFixed(1)} L${(p.x - vx * k).toFixed(1)} ${(p.y - vy * k).toFixed(1)}`);
+          p.el.setAttribute('d', `M${p.x.toFixed(2)} ${p.y.toFixed(2)} L${(p.x - vx * k).toFixed(2)} ${(p.y - vy * k).toFixed(2)}`);
         }
       }
     }
@@ -3499,8 +3499,8 @@ class WeatherScene {
       if (s.age >= 1) return;
       s.age += dt / 0.35;
       const a = Math.min(1, s.age);
-      s.el.setAttribute('rx', (1 + a * 6).toFixed(1));
-      s.el.setAttribute('ry', (0.5 + a * 1.6).toFixed(1));
+      s.el.setAttribute('rx', (1 + a * 6).toFixed(2));
+      s.el.setAttribute('ry', (0.5 + a * 1.6).toFixed(2));
       s.el.style.opacity = ((1 - a) * 0.7).toFixed(2);
     });
 
@@ -3509,7 +3509,7 @@ class WeatherScene {
     this.streaks.forEach((s) => {
       s.x -= (160 + wind * 9) * s.s * dt;
       if (s.x < -120) { s.x = SC.W + rnd(20, 260); s.y = rnd(30, 205); s.s = rnd(0.7, 1.3); }
-      s.el.setAttribute('transform', `translate(${s.x.toFixed(1)} ${s.y.toFixed(1)}) scale(${s.s.toFixed(2)} 1)`);
+      s.el.setAttribute('transform', `translate(${s.x.toFixed(2)} ${s.y.toFixed(2)}) scale(${s.s.toFixed(2)} 1)`);
       s.el.style.opacity = (gust * 0.5).toFixed(2);
     });
 
@@ -3540,9 +3540,9 @@ class WeatherScene {
       p.x += (p.vx - wind * 0.3 - vw * 0.6) * dt;
       p.y += (p.vy - 4) * dt;
       const k = p.age;
-      p.el.setAttribute('cx', p.x.toFixed(1));
-      p.el.setAttribute('cy', p.y.toFixed(1));
-      p.el.setAttribute('r', ((1.2 + k * 5.5) * fs * 0.8).toFixed(1));
+      p.el.setAttribute('cx', p.x.toFixed(2));
+      p.el.setAttribute('cy', p.y.toFixed(2));
+      p.el.setAttribute('r', ((1.2 + k * 5.5) * fs * 0.8).toFixed(2));
       const fade = k < 0.12 ? k / 0.12 : (1 - k) / 0.88;
       p.el.style.opacity = (coldness * 0.5 * fade).toFixed(2);
     });
@@ -3556,37 +3556,78 @@ class WeatherScene {
   _terrain(w) {
     const fig = this.figure;
     this.fy = 0;
+    this._top = null;
     if (!fig.terrain || !this.$('road-b')) return 0;
     const $ = this.$;
     const ax = fig.anchor[0];
     const e = (x) => fig.terrain(fig.s + (x - ax));
     const cam = e(ax) * 0.6;
     const top = (x) => SC.ROAD_Y - (e(x) - cam);
-    const xs = [];
-    for (let x = -20; x <= SC.W + 20; x += 10) xs.push(x);
+    this._top = top;
+    // Sample points move with the ground, so the road does not swim.
+    const STEP = 8;
+    const xs = [-60];
+    for (let x = -56 - wrap(w, 0, STEP); x < SC.W + 60; x += STEP) xs.push(x);
+    xs.push(SC.W + 60);
     const tops = xs.map(top);
-    const edge = xs.map((x, i) => `${x} ${tops[i].toFixed(1)}`).join(' L');
-    const back = xs.slice().reverse().map((x, i) => `${x} ${(tops[xs.length - 1 - i] + SC.ROAD_H).toFixed(1)}`).join(' L');
+    const edge = xs.map((x, i) => `${x.toFixed(2)} ${tops[i].toFixed(2)}`).join(' L');
+    const back = xs.slice().reverse().map((x, i) => `${x.toFixed(2)} ${(tops[xs.length - 1 - i] + SC.ROAD_H).toFixed(2)}`).join(' L');
     const band = `M${edge} L${back} Z`;
     $('road-b').setAttribute('d', band);
     $('wet').setAttribute('d', band);
     $('road-edge').setAttribute('d', `M${edge}`);
-    const rows = this.env === 'path' ? [9, 22] : [17];
-    $('road-dash').setAttribute('d', rows.map((r) => `M${xs.map((x, i) => `${x} ${(tops[i] + r).toFixed(1)}`).join(' L')}`).join(' '));
-    $('land').setAttribute('d', `M${xs.map((x, i) => `${x} ${(tops[i] - 6).toFixed(1)}`).join(' L')} L${SC.W + 20} ${SC.H} L-20 ${SC.H} Z`);
-    $('verge').setAttribute('d', `M${back.split(' L').reverse().join(' L')} L${SC.W + 20} ${SC.H} L-20 ${SC.H} Z`);
+    $('land').setAttribute('d', `M${xs.map((x, i) => `${x.toFixed(2)} ${(tops[i] - 6).toFixed(2)}`).join(' L')} L${SC.W + 60} ${SC.H} L-60 ${SC.H} Z`);
+    $('verge').setAttribute('d', `M${back.split(' L').reverse().join(' L')} L${SC.W + 60} ${SC.H} L-60 ${SC.H} Z`);
     for (let i = 0; i < 3 && $('post0'); i += 1) {
       const x = wrap(120 + i * 240 - w, -30, 690);
-      $(`post${i}`).setAttribute('transform', `translate(${x.toFixed(1)} ${(top(x) + 2).toFixed(1)})`);
+      $(`post${i}`).setAttribute('transform', `translate(${x.toFixed(2)} ${(top(x) + 2).toFixed(2)})`);
     }
     // The figure stands on the road and tilts with the slope.
     const dy = -(e(ax) - cam);
     // People on foot stay upright, only vehicles tilt with the slope.
     const slope = fig.upright ? 0 : -deg(Math.atan2(e(ax + 6) - e(ax - 6), 12));
-    $('fig').setAttribute('transform', `translate(${ax} ${(fig.anchor[1] + dy).toFixed(1)}) rotate(${slope.toFixed(2)}) scale(${fig.scale || 1})`);
-    if ($('fig-sh')) $('fig-sh').setAttribute('transform', `translate(0 ${dy.toFixed(1)})`);
+    $('fig').setAttribute('transform', `translate(${ax} ${(fig.anchor[1] + dy).toFixed(2)}) rotate(${slope.toFixed(2)}) scale(${fig.scale || 1})`);
+    if ($('fig-sh')) $('fig-sh').setAttribute('transform', `translate(0 ${dy.toFixed(2)})`);
     this.fy = dy;
     return cam;
+  }
+
+  /**
+   * Road dashes and path pebbles. They are fixed in the world and drawn at
+   * their exact position every frame, so they glide with the ground.
+   */
+  _marks(w) {
+    const el = this.$('road-dash');
+    if (!el) return;
+    const top = this._top || (() => SC.ROAD_Y);
+    const f = (v) => v.toFixed(2);
+    let d = '';
+    if (this.env === 'road') {
+      const P = 40;
+      for (let i = Math.floor((w - 70) / P); ; i += 1) {
+        const x0 = i * P - w;
+        if (x0 > SC.W + 70) break;
+        const xm = x0 + 11;
+        const x1 = x0 + 22;
+        d += `M${f(x0)} ${f(top(x0) + 17)} L${f(xm)} ${f(top(xm) + 17)} L${f(x1)} ${f(top(x1) + 17)} `;
+      }
+    } else {
+      // Pebbles of different size, spaced a little irregularly, in two rows.
+      const hash = (n) => { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); };
+      [[9, 17, 0], [22, 19, 7]].forEach(([row, P, off]) => {
+        for (let i = Math.floor((w - 70 - off) / P); ; i += 1) {
+          const h1 = hash(i + row * 1000);
+          const h2 = hash(i * 3 + row * 1000 + 1);
+          const x = i * P + off + (h1 - 0.5) * 7 - w;
+          if (x > SC.W + 70) break;
+          const y = top(x) + row + (h2 - 0.5) * 3;
+          const rx = 1.1 + h2 * 1.1;
+          const ry = rx * 0.7;
+          d += `M${f(x - rx)} ${f(y)} a${f(rx)} ${f(ry)} 0 1 0 ${f(2 * rx)} 0 a${f(rx)} ${f(ry)} 0 1 0 ${f(-2 * rx)} 0 `;
+        }
+      });
+    }
+    el.setAttribute('d', d);
   }
 
   /** Sweat, heat haze and flying leaves, driven by the mood. */
@@ -3620,13 +3661,13 @@ class WeatherScene {
         d.y += d.vy * dt;
       }
       const fade = d.age < 0.55 ? Math.min(1, d.age / 0.1) : 1 - (d.age - 0.55) / 0.45;
-      d.el.setAttribute('transform', `translate(${d.x.toFixed(1)} ${d.y.toFixed(1)}) scale(${(fs * 0.7).toFixed(2)})`);
+      d.el.setAttribute('transform', `translate(${d.x.toFixed(2)} ${d.y.toFixed(2)}) scale(${(fs * 0.7).toFixed(2)})`);
       d.el.style.opacity = (0.85 * fade).toFixed(2);
     });
     this.haze.forEach((h) => {
       h.age += dt / 2.2;
       if (h.age >= 1) h.age -= 1;
-      h.el.setAttribute('transform', `translate(${(h.x + Math.sin(t * 2 + h.x) * 3).toFixed(1)} ${(SC.ROAD_Y + 6 - h.age * 50).toFixed(1)})`);
+      h.el.setAttribute('transform', `translate(${(h.x + Math.sin(t * 2 + h.x) * 3).toFixed(2)} ${(SC.ROAD_Y + 6 - h.age * 50).toFixed(2)})`);
       h.el.style.opacity = (hot * 0.5 * Math.sin(h.age * Math.PI)).toFixed(2);
     });
 
@@ -3638,7 +3679,7 @@ class WeatherScene {
       l.r += 420 * dt * l.s;
       if (l.x < -20) { l.x = SC.W + rnd(20, 300); l.y = rnd(60, 230); }
       const y = l.y + Math.sin(t * 3 + l.x * 0.02) * 12;
-      l.el.setAttribute('transform', `translate(${l.x.toFixed(1)} ${y.toFixed(1)}) rotate(${(l.r % 360).toFixed(0)}) scale(${l.s.toFixed(2)})`);
+      l.el.setAttribute('transform', `translate(${l.x.toFixed(2)} ${y.toFixed(2)}) rotate(${(l.r % 360).toFixed(0)}) scale(${l.s.toFixed(2)})`);
       l.el.style.opacity = (windy * 0.95).toFixed(2);
     });
   }
@@ -3647,8 +3688,8 @@ class WeatherScene {
     const s = this.splashes.find((q) => q.age >= 1);
     if (!s) return;
     s.age = 0;
-    s.el.setAttribute('cx', x.toFixed(1));
-    s.el.setAttribute('cy', y.toFixed(1));
+    s.el.setAttribute('cx', x.toFixed(2));
+    s.el.setAttribute('cy', y.toFixed(2));
   }
 }
 
@@ -4054,7 +4095,9 @@ class WeatherGoByLutarym extends HTMLElement {
     let last = performance.now();
     const tick = (now) => {
       if (!this.isConnected || this._visible === false) { this._raf = null; return; }
-      const dt = Math.min(0.1, (now - last) / 1000);
+      const raw = (now - last) / 1000;
+      // After a pause (hidden tab) continue smoothly instead of jumping.
+      const dt = raw > 0.25 ? 1 / 60 : Math.min(0.05, raw);
       last = now;
       this._scene.step(dt);
       this._raf = requestAnimationFrame(tick);
@@ -4106,10 +4149,9 @@ class WeatherGoByLutarym extends HTMLElement {
         position: absolute; left: 8px; top: 8px; max-width: calc(100% - 16px);
         display: flex; flex-direction: column; gap: 0;
         padding: 5px 11px 6px; border-radius: 11px;
-        background: rgba(11, 16, 23, 0.72);
+        background: rgba(11, 16, 23, 0.8);
         border: 1.5px solid var(--accent);
         box-shadow: 0 0 16px -4px var(--accent);
-        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
         transition: border-color 700ms ease, box-shadow 700ms ease;
       }
       .q {
