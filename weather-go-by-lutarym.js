@@ -1,5 +1,6 @@
 /**
  * weather-go-by-lutarym.js
+ * Version 1.1.0
  * Lovelace Custom Card for Home Assistant: "is the weather right for X?"
  *
  * Fetches an hourly forecast from Open-Meteo (DWD ICON, no API key) for the
@@ -39,6 +40,7 @@
  *   demo_interval: 20                 # optional, seconds between weather changes in demo mode
  */
 
+const VERSION = '1.1.0';
 const CARD_TAG = 'weather-go-by-lutarym';
 const EDITOR_TAG = 'weather-go-by-lutarym-editor';
 const REFRESH_MS = 30 * 60 * 1000;
@@ -1673,7 +1675,8 @@ const FIGURES = {
    * A couple out for a walk, hand in hand, over gentle hills. About 50
    * seconds at full pace: he trips over a root, a dinosaur chases them
    * (he runs off, she stops and tells it off until it shrinks and slinks
-   * away), they rest on a bench where he nods off, and they take a selfie.
+   * away), they rest on a bench where he nods off, they take a selfie, and
+   * at a beach they sit down in the sand and watch the boats go by.
    * When the weather says no, a little comedy plays instead:
    *   storm  his toupee flies away; the wind brings it back, slightly askew
    *   rain   he holds the umbrella over her and gets soaked, then steps
@@ -1702,7 +1705,9 @@ const FIGURES = {
       { ev: 'bench', dur: 9 },
       { len: 320, v: 1 },
       { ev: 'selfie', dur: 5 },
-      { len: 120, v: 1 },
+      { len: 640, v: 1 },
+      { ev: 'beach', dur: 13 },
+      { len: 640, v: 1 },
     ],
     GAG: { wind: 12.5, rain: 12, cold: 11, hot: 11 },
     // Dinosaur chase, keys [time, value, ease into this key].
@@ -1777,6 +1782,42 @@ const FIGURES = {
       const drops = Array.from({ length: 30 }, (_, i) => `<circle id="wkd${i}" r="1.3" fill="#8FB8E8" style="opacity:0"/>`).join('');
       return `
         <g id="wk-props">
+          <g id="wk-beach" opacity="0">
+            <defs>
+              <linearGradient id="wk-sea" gradientUnits="userSpaceOnUse" x1="-450" y1="0" x2="450" y2="0">
+                <stop offset="0" stop-color="#2F6EA6" stop-opacity="0"/><stop offset="0.12" stop-color="#2F6EA6"/>
+                <stop offset="0.88" stop-color="#2F6EA6"/><stop offset="1" stop-color="#2F6EA6" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="wk-sand" gradientUnits="userSpaceOnUse" x1="-450" y1="0" x2="450" y2="0">
+                <stop offset="0" stop-color="#D9B77E" stop-opacity="0"/><stop offset="0.12" stop-color="#D9B77E"/>
+                <stop offset="0.88" stop-color="#D9B77E"/><stop offset="1" stop-color="#D9B77E" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="wk-foam" gradientUnits="userSpaceOnUse" x1="-450" y1="0" x2="450" y2="0">
+                <stop offset="0" stop-color="#EAF4FF" stop-opacity="0"/><stop offset="0.12" stop-color="#EAF4FF"/>
+                <stop offset="0.88" stop-color="#EAF4FF"/><stop offset="1" stop-color="#EAF4FF" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <rect x="-450" y="-49" width="900" height="26" fill="url(#wk-sea)"/>
+            <path id="wk-swell" fill="none" stroke="url(#wk-foam)" stroke-width="0.8" opacity="0.45"/>
+            <g id="wk-sail">
+              <path d="M-14 0 L14 0 L10 5 L-10 5 Z" fill="#1F3A5F"/>
+              <path d="M0 0 V-28" stroke="#E8EDF4" stroke-width="1.2"/>
+              <path d="M1 -2 L1 -27 L14 -2 Z" fill="#F2F6FB"/>
+              <path d="M-1 -2 L-1 -22 L-11 -2 Z" fill="#FFC9A0"/>
+            </g>
+            <g id="wk-motor">
+              <path id="wk-wake" fill="none" stroke="#EAF4FF" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M-18 -3 L14 -3 L19 -7 L21 -6 L16 3 L-15 3 Z" fill="#F2F6FB"/>
+              <path d="M-15 0 L17 0" stroke="#FF5F52" stroke-width="1.4"/>
+              <path d="M-8 -3 L-6 -10 L6 -10 L9 -3 Z" fill="#DCE4EE"/>
+              <path d="M-4 -9 L-3 -5 L4 -5 L5 -9 Z" fill="#3D8BFF"/>
+            </g>
+            <path d="M-450 40 L-450 -26 C-300 -28 -150 -25 0 -27 C150 -29 300 -25 450 -26 L450 40 Z" fill="url(#wk-sand)"/>
+            <path id="wk-shore" fill="none" stroke="url(#wk-foam)" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M-120 -8 l3 -1 M-60 4 l2 -1 M40 -5 l3 -1 M110 6 l2 -1 M-180 10 l3 -1 M170 -10 l3 -1" stroke="#B8955E" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M-250 -14 q4 -6 8 0 M210 -16 q3 -5 6 0" stroke="#F2F6FB" stroke-width="1.2" fill="none"/>
+          </g>
+          <ellipse id="wk-sh" cx="12" cy="1" rx="38" ry="3.2" fill="#000" opacity="0"/>
           <g id="wk-bench" opacity="0">
             <path d="M-14 -24 H44 M-12 -24 V0 M42 -24 V0 M-10 -12 H40" stroke="#4A3828" stroke-width="2.6" stroke-linecap="round"/>
             <rect x="-16" y="-27" width="62" height="4" rx="1.5" fill="#7A5A40"/>
@@ -1883,10 +1924,11 @@ const FIGURES = {
         this.evT += dt;
         if (ev.ev === 'dino') {
           this.vel = this._dinoSpeed(this.evT);
+          // Blend from the speed they came with, so nothing jerks.
+          if (this.evT < 0.6 && ev.v0 !== undefined) this.vel = lerp(ev.v0, this.vel, ease(this.evT / 0.6));
           this.s = Math.min(ev.at + ev.travel, this.s + this.vel * dt);
         } else this.vel = 0;
         if (this.evT >= ev.dur || pace < 0.02) {
-          if (ev.ev === 'dino' && this.evT >= ev.dur) this.s = ev.at + ev.travel;
           this.done.add(ev.ev);
           this.ev = null;
         }
@@ -1899,7 +1941,19 @@ const FIGURES = {
         const dp = next.at - this.s;
         // Tripping and the dinosaur happen at full walking speed, the others brake gently.
         if (next.ev !== 'trip' && next.ev !== 'dino' && dp < 120) vt = Math.min(vt, Math.sqrt(2 * 40 * Math.max(0, dp)));
-        if (dp < 1.2) { this.s = next.at; this.vel = 0; this.ev = next; this.evT = 0; return 0; }
+        if (next.ev === 'dino') {
+          // Walks straight into the chase: no stop, no jump.
+          if (dp <= this.vel * dt) {
+            const v = dp / Math.max(dt, 1e-3);
+            this.s = next.at; this.ev = next; this.evT = 0; this.ev.v0 = this.vel;
+            return v;
+          }
+        } else if (dp <= Math.max(this.vel * dt, next.ev === 'trip' ? 1.2 : 0.05)) {
+          // Arrives at the stop: the braking has brought the speed close to zero.
+          const v = dp / Math.max(dt, 1e-3);
+          this.s = next.at; this.vel = 0; this.ev = next; this.evT = 0;
+          return v;
+        }
       }
       const acc = vt > this.vel ? 40 : 90;
       this.vel += clamp(vt - this.vel, -acc * dt, acc * dt);
@@ -2078,6 +2132,37 @@ const FIGURES = {
       if (near) this._arm(P, true, lerpPt(P.hand, [P.head[0] + 7, P.head[1] + 5], k), -1);
       this._arm(P, false, lerpPt(P.hand2, [P.shoulder[0] + 6, P.shoulder[1] + 18], k), -1);
     },
+    /** Sitting in the sand: knees up, one hand behind on the ground. */
+    _sitSand(P, k, lean = -8) {
+      const kneeUp = (hip, ankle) => {
+        const a = ik(hip, ankle, LEG.thigh, LEG.shin, 1);
+        const b = ik(hip, ankle, LEG.thigh, LEG.shin, -1);
+        return a[1] <= b[1] ? a : b;
+      };
+      const H = lerpPt(P.hip, [-1, -9.5], k);
+      const dx = H[0] - P.hip[0];
+      const dy = H[1] - P.hip[1];
+      P.hip = H;
+      P.shoulder = rotAround([P.shoulder[0] + dx, P.shoulder[1] + dy], H, lean * k);
+      P.head = rotAround([P.head[0] + dx, P.head[1] + dy], H, lean * k);
+      P.ankle = lerpPt(P.ankle, [25, -3], k);
+      P.ankle2 = lerpPt(P.ankle2, [21, -3], k);
+      P.footAng = lerp(P.footAng || 0, -14, k);
+      P.footAng2 = lerp(P.footAng2 || 0, -14, k);
+      P.foot = [P.ankle[0], 0];
+      P.foot2 = [P.ankle2[0], 0];
+      P.knee = k > 0.5 ? kneeUp(P.hip, P.ankle) : this._knee(P.hip, P.ankle);
+      P.knee2 = k > 0.5 ? kneeUp(P.hip, P.ankle2) : this._knee(P.hip, P.ankle2);
+      this._arm(P, true, lerpPt(P.hand, [P.knee[0] - 1, P.knee[1] - 1], k), -1);
+      this._arm(P, false, lerpPt(P.hand2, [H[0] - 12, -1.5], k), 1);
+    },
+    /** How much of the screen column at x the beach covers (0..1), for the trees behind it. */
+    sceneMask(x) {
+      if (this._beachCX === null || this._beachCX === undefined) return 0;
+      const half = 450 * this.scale;
+      return clamp((half - Math.abs(x - this._beachCX)) / (90 * this.scale), 0, 1);
+    },
+
     _sit(P, k, lean = -4) {
       const hip = [-2, -24.6];
       const H = lerpPt(P.hip, hip, k);
@@ -2134,12 +2219,14 @@ const FIGURES = {
       const gt = this.gagT;
 
       // ---------- holding hands ----------
-      const handsMeet = () => {
+      // k blends from the current arm pose (0) to holding hands (1).
+      const handsMeet = (k = 1) => {
         const fsh = this._fromF(F.shoulder);
         const H = [(M.shoulder[0] + fsh[0]) / 2, M.hip[1] - 3 + Math.sin(this.phM * Math.PI * 2) * 1.2 * wW];
-        this._arm(M, false, H, -1);
-        this._arm(F, true, this._toF(H), -1);
+        this._arm(M, false, lerpPt(M.hand2, H, k), -1);
+        this._arm(F, true, lerpPt(F.hand, this._toF(H), k), -1);
       };
+      let holdK = 1;
 
       // ---------- trip over the root ----------
       el('wk-root').setAttribute('opacity', '0');
@@ -2196,12 +2283,28 @@ const FIGURES = {
         manOff = this._kf(D.man, et);
         const dMan = (this._kf(D.man, et + 0.02) - this._kf(D.man, et - 0.02)) / 0.04;
         manFlip = et > 10.55 && et < 12.6;
-        hold = et > 13.1;
+        // They keep holding hands until the roar, and take hands again at the end.
+        const kk = (a, b) => ease(clamp((et - a) / (b - a), 0, 1));
+        holdK = et < 7 ? 1 - kk(1.9, 2.35) : kk(13.1, 13.55);
+        hold = holdK > 0.001;
         // They hear it, look back, jump with fright and run.
         jump = -Math.sin(clamp((et - 2.25) / 0.35, 0, 1) * Math.PI) * 6;
-        if (et > 2.6 && et < 7.95) Object.assign(M, this._gait('phMr', true, dWorld + dMan));
+        // Poses blend into the run instead of switching at once.
+        const mixPose = (A, B, f) => {
+          const o = {};
+          Object.keys(B).forEach((key) => {
+            const a = A[key];
+            const b = B[key];
+            if (Array.isArray(b) && Array.isArray(a)) o[key] = lerpPt(a, b, f);
+            else if (typeof b === 'number' && typeof a === 'number') o[key] = lerp(a, b, f);
+            else o[key] = b;
+          });
+          return o;
+        };
+        const into = ease(clamp((et - 2.6) / 0.3, 0, 1));
+        if (et > 2.6 && et < 7.95) Object.assign(M, mixPose({ ...M }, this._gait('phMr', true, dWorld + dMan), into));
         else if (manFlip) Object.assign(M, this._gait('phMb', false, Math.abs(dMan)));
-        if (et > 2.6 && et < 7.55) Object.assign(F, this._gait('phFr', true, dWorld / this.FS));
+        if (et > 2.6 && et < 7.55) Object.assign(F, mixPose({ ...F }, this._gait('phFr', true, dWorld / this.FS), into));
         if (et > 1.9 && et < 2.45) { lookM = true; lookF = true; }
         if (et > 3.6 && et < 4.3) lookM = true;
         if (et > 1.9 && et < 7.95) mouthM = 'open';
@@ -2258,10 +2361,10 @@ const FIGURES = {
         const FF = { ...F };
         this._sit(F, sit, -4 - 10 * k(1.5, 2.4) * (1 - k(5.6, 6.0)));
         hold = false;
-        if (sit > 0.6) {
-          // His arm around her shoulders.
+        if (sit > 0.4) {
+          // His arm around her shoulders, blended in as they sit.
           const sh = this._fromF(F.shoulder);
-          this._arm(M, false, [sh[0] + 3, sh[1] + 3], -1);
+          this._arm(M, false, lerpPt(M.hand2, [sh[0] + 3, sh[1] + 3], ease(clamp((sit - 0.4) / 0.5, 0, 1))), -1);
           mouthF = 'smile';
         }
         if (et > 2.6 && et < 5.6) {
@@ -2293,6 +2396,72 @@ const FIGURES = {
       }
       el('wk-zzz').setAttribute('opacity', (zzz * (0.6 + 0.4 * Math.sin(t * 3))).toFixed(2));
       el('wk-zzz').setAttribute('transform', `translate(${(M.head[0] + 6).toFixed(2)} ${(M.head[1] - 12 - ((t * 6) % 6)).toFixed(2)})`);
+
+      // ---------- beach: sit in the sand and watch the boats ----------
+      const beachEv = this.events.find((x) => x.ev === 'beach');
+      const beachX = (beachEv.at - this.s) / this.scale;
+      const beachOn = beachX > -700 && beachX < 700;
+      el('wk-beach').setAttribute('opacity', beachOn ? '1' : '0');
+      this._beachCX = beachOn ? this.anchor[0] + beachX * this.scale : null;
+      // On the sand the couple casts its own shadow.
+      el('wk-sh').setAttribute('opacity', (0.22 * clamp((420 - Math.abs(beachX)) / 40, 0, 1)).toFixed(2));
+      if (beachOn) {
+        el('wk-beach').setAttribute('transform', `translate(${beachX.toFixed(2)} 0)`);
+        // Gentle swell lines on the water and foam along the shore.
+        const swell = [];
+        for (let r = 0; r < 3; r += 1) {
+          const y = -45 + r * 7;
+          let d = `M-430 ${y}`;
+          for (let x = -420; x <= 430; x += 20) d += ` L${x} ${(y + Math.sin(x * 0.05 + t * (1.2 + r * 0.3) + r) * 0.9).toFixed(2)}`;
+          swell.push(d);
+        }
+        el('wk-swell').setAttribute('d', swell.join(' '));
+        let shore = 'M-430 -24.5';
+        for (let x = -420; x <= 430; x += 15) shore += ` L${x} ${(-24.5 + Math.sin(x * 0.04 - t * 1.6) * 1.1 + Math.sin(t * 0.9) * 0.6).toFixed(2)}`;
+        el('wk-shore').setAttribute('d', shore);
+      }
+      // Boats: a sailboat drifts by slowly, later a motorboat speeds past.
+      const be = ev === 'beach' ? et : -1;
+      const sailX = be >= 0 ? lerp(300, -260, be / 13) : 400;
+      const motX = be >= 4 ? lerp(330, -330, (be - 4) / 4.2) : 450;
+      el('wk-sail').setAttribute('transform', `translate(${sailX.toFixed(2)} ${(-35 + Math.sin(t * 1.4) * 0.6).toFixed(2)}) rotate(${(Math.sin(t * 1.1) * 2).toFixed(2)}) scale(0.55)`);
+      el('wk-motor').setAttribute('transform', `translate(${motX.toFixed(2)} ${(-29.5 + Math.sin(t * 5) * 0.4).toFixed(2)}) scale(0.6)`);
+      el('wk-sail').setAttribute('opacity', be >= 0 ? '1' : '0');
+      el('wk-motor').setAttribute('opacity', be >= 4 && be < 8.4 ? '1' : '0');
+      el('wk-wake').setAttribute('d', `M20 1 Q60 ${(3 + Math.sin(t * 9)).toFixed(2)} 110 6 M20 -1 Q55 -4 95 -2`);
+      if (ev === 'beach') {
+        hold = false;
+        const k = (a, b) => ease(clamp((et - a) / (b - a), 0, 1));
+        const sit = k(0.3, 1.5) * (1 - k(11.4, 12.7));
+        this._sitSand(M, sit, -8);
+        this._sitSand(F, sit, -8);
+        mouthM = 'smile';
+        mouthF = 'smile';
+        // Heads follow the boats.
+        const watch = (be > 1.5 && be < 11.2);
+        const target = motX < 300 && motX > -300 ? motX : sailX;
+        if (watch && target < M.head[0] - 6) lookM = true;
+        if (watch && target < this.FX - 6) lookF = true;
+        if (et > 3.6 && et < 5.2) {
+          // He points at the sailboat.
+          this._arm(M, true, [M.shoulder[0] + 21, M.shoulder[1] - 13], -1);
+          mouthM = 'laugh';
+        }
+        if (et > 5.0 && et < 10.8) {
+          // She leans her head on his shoulder, his arm around her.
+          const lean2 = k(5.0, 5.9) * (1 - k(10.2, 10.8));
+          F.shoulder = rotAround(F.shoulder, F.hip, -12 * lean2);
+          F.head = rotAround(F.head, F.hip, -15 * lean2);
+          F.headTilt = 12 * lean2;
+          const sh = this._fromF(F.shoulder);
+          this._arm(M, false, lerpPt(M.hand2, [sh[0] + 3, sh[1] + 3], lean2), -1);
+        }
+        if (et > 5.9 && et < 7.1) {
+          // He waves at the motorboat.
+          this._arm(M, true, [M.shoulder[0] + 8 + Math.sin(t * 12) * 4, M.shoulder[1] - 20], -1);
+          mouthM = 'laugh';
+        }
+      }
 
       // ---------- selfie ----------
       let phone = false;
@@ -2494,7 +2663,10 @@ const FIGURES = {
       if (tongue) el('m-tongue').setAttribute('transform', `rotate(${(Math.sin(t * 9) * 25).toFixed(0)} 6.8 5)`);
 
       // ---------- holding hands and placing the two ----------
-      if (hold) handsMeet();
+      // Letting go and taking hands always blends over a moment.
+      const holdTarget = hold ? holdK : 0;
+      this.holdW = this.holdW === undefined ? holdTarget : this.holdW + clamp(holdTarget - this.holdW, -c.dt / 0.35, c.dt / 0.35);
+      if (this.holdW > 0.001) handsMeet(this.holdW);
 
       // Ponytail swings with the steps.
       el('f-pony').setAttribute('transform', `rotate(${(Math.sin(this.phF * Math.PI * 4) * 6 * wW - (gag === 'wind' ? 25 + Math.sin(t * 9) * 8 : 0)).toFixed(2)} -6.6 -2)`);
@@ -3457,6 +3629,9 @@ class WeatherScene {
         const x = scroll ? wrap(tr.x - w * 0.55, -70, 680) : tr.x;
         const sway = Math.sin(t * (1.4 + wind * 0.03) + tr.ph) * (0.6 + wind * 0.12);
         tr.el.setAttribute('transform', `translate(${x.toFixed(2)} ${((this.env === 'road' || this.env === 'path' ? SC.ROAD_Y - 1 : SC.HORIZON + 4) + cam * 0.45).toFixed(2)})`);
+        // Trees give way where the figure shows open water (the beach).
+        const hide = this.figure.sceneMask ? this.figure.sceneMask(x) : 0;
+        tr.el.style.opacity = hide > 0 ? (1 - hide).toFixed(2) : '';
         tr.sway.setAttribute('transform', `scale(${tr.s}) rotate(${(lean + sway).toFixed(2)})`);
       });
     }
@@ -4021,7 +4196,7 @@ class WeatherGoByLutarym extends HTMLElement {
     const fmt1 = (v) => (isNum(v) ? nf1.format(v) : '–');
 
     $('q').textContent = c.title || info.question;
-    $('src').textContent = c.demo ? t(hass, 'demoNote') : t(hass, 'source');
+    $('src').textContent = `${c.demo ? t(hass, 'demoNote') : t(hass, 'source')} · v${VERSION}`;
 
     const target = targetDate();
     const isTomorrow = isoDate(target) !== isoDate(new Date());
@@ -4384,6 +4559,10 @@ class WeatherGoByLutarymEditor extends HTMLElement {
       </style>
       <div class="form"></div>`;
     const form = this.querySelector('.form');
+    const ver = document.createElement('div');
+    ver.className = 'hint';
+    ver.textContent = `Weather Go by Lutarym · v${VERSION}`;
+    form.appendChild(ver);
 
     form.appendChild(this._selectRow(
       t(hass, 'editorActivity'), activity,
@@ -4453,6 +4632,7 @@ class WeatherGoByLutarymEditor extends HTMLElement {
 
 if (!customElements.get(EDITOR_TAG)) customElements.define(EDITOR_TAG, WeatherGoByLutarymEditor);
 
+console.info(`%c Weather Go by Lutarym %c v${VERSION} `, 'background:#22E07A;color:#0B1017;font-weight:700', 'background:#131A24;color:#E8EDF4');
 window.customCards = window.customCards || [];
 if (!window.customCards.some((c) => c.type === CARD_TAG)) {
   window.customCards.push({

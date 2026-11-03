@@ -1,5 +1,7 @@
 # Weather Go by Lutarym
 
+Version 1.1.0
+
 Lovelace custom card for Home Assistant: is the weather right for your activity today?
 
 Each activity has its own animated scene, and the expected weather plays in it:
@@ -8,7 +10,7 @@ Each activity has its own animated scene, and the expected weather plays in it:
 |---|---|
 | `bike` | A ride with changing scenes: cruising, a sprint out of the saddle, a climb, a fast tucked descent, a stop for a drink from the bottle and an easy restart; the road follows the hills |
 | `running` | Runner on a path, with a natural running stride and flight phase |
-| `walking` | A couple, man and woman, walking hand in hand over gentle hills: he trips over a root, a dinosaur chases them (he runs off and leaves her behind, she turns round and tells it off until it shrinks and slinks away, then he comes back a little embarrassed), they rest on a bench where he nods off until she pokes him, and they take a selfie; with light rain he holds the umbrella over both |
+| `walking` | A couple, man and woman, walking hand in hand over gentle hills: he trips over a root, a dinosaur chases them (he runs off and leaves her behind, she turns round and tells it off until it shrinks and slinks away, then he comes back a little embarrassed), they rest on a bench where he nods off until she pokes him, they take a selfie, and at a beach they sit down in the sand, she leans her head on his shoulder and they watch a sailboat and a motorboat go by; with light rain he holds the umbrella over both |
 | `boating` | Motorboat on the water with a foam trail |
 | `sailing` | Sailboat heeling in the wind, sails filling |
 | `football` | Player shooting at a goal |
