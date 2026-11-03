@@ -1707,8 +1707,8 @@ const FIGURES = {
     GAG: { wind: 12.5, rain: 12, cold: 11, hot: 11 },
     // Dinosaur chase, keys [time, value, ease into this key].
     DINO: {
-      x: [[0, -330], [1.6, -150, 1], [2.6, -115, 1], [6.9, -75], [7.5, -48, 1], [8.3, -48], [9.6, -58, 1], [10.55, -58], [12.8, -380, 1]],
-      size: [[0, 1], [8.4, 1], [9.6, 0.72, 1], [10.55, 0.72], [12.8, 0.85, 1]],
+      x: [[0, -330], [1.6, -150, 1], [2.6, -115, 1], [6.9, -75], [7.5, -48, 1], [8.3, -48], [9.6, -28, 1], [10.55, -28], [12.8, -380, 1]],
+      size: [[0, 1], [8.4, 1], [9.6, 0.4, 1], [10.55, 0.4], [12.8, 0.45, 1]],
       man: [[0, 0], [3.1, 0], [6.9, 60], [7.95, 112, 1], [10.55, 112], [12.6, 0, 1], [14, 0]],
     },
 
@@ -2234,9 +2234,11 @@ const FIGURES = {
         if (et >= 8.3 && et < 10.5) {
           // She tells the dinosaur off, wagging her finger.
           leanPose(F, 6);
-          this._arm(F, true, [F.shoulder[0] + 21, F.shoulder[1] - 5 + Math.sin(t * 14) * 3], -1);
+          // As it shrinks she looks and points down at it.
+          const down = ease(clamp((et - 8.6) / 1.0, 0, 1));
+          this._arm(F, true, [F.shoulder[0] + 21 - down * 3, F.shoulder[1] - 5 + down * 13 + Math.sin(t * 14) * 3], -1);
           this._arm(F, false, [F.hip[0] - 5, F.hip[1] - 2], -1);
-          F.headTilt = -10;
+          F.headTilt = lerp(-10, 14, down);
           mouthF = Math.sin(t * 11) > 0 ? 'open' : 'frown';
         }
         if (et >= 13.3) mouthF = 'smile';
