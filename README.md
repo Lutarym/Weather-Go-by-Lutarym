@@ -1,6 +1,6 @@
 # Weather Go by Lutarym
 
-Version 1.2.0
+Version 1.3.0
 
 Lovelace custom card for Home Assistant: is the weather right for your activity today?
 
@@ -8,7 +8,7 @@ Each activity has its own animated scene, and the expected weather plays in it:
 
 | Activity | Scene |
 |---|---|
-| `bike` | A ride with changing scenes: cruising, a sprint out of the saddle, a climb, a fast tucked descent, a stop for a drink from the bottle and an easy restart; the road follows the hills |
+| `bike` | In real 3D: a ride with changing scenes: cruising, a sprint out of the saddle, a climb, a fast tucked descent, a stop for a drink from the bottle and an easy restart; the road follows the hills |
 | `running` | Runner on a path, with a natural running stride and flight phase |
 | `walking` | In real 3D: a couple, man and woman, walking hand in hand over gentle hills: he trips over a root, a dinosaur chases them (he runs off and leaves her behind, she turns round and tells it off until it shrinks and slinks away, then he comes back a little embarrassed), they rest on a bench where he nods off until she pokes him, they take a selfie, and at a beach they sit down in the sand, she leans her head on his shoulder and they watch a sailboat and a motorboat go by; with light rain he holds the umbrella over both |
 | `boating` | Motorboat on the water with a foam trail |
@@ -42,7 +42,7 @@ The verdict and the values for rain, wind and temperature are shown inside the s
 
 ## 3D
 
-Walking is drawn as a real 3D scene: rounded 3D figures and objects with light, shadows and perspective. On the bench and at the selfie the couple turns to face you, at the beach they walk down to the water and sit facing the sea. It needs WebGL, which current browsers and the Home Assistant app provide. Without WebGL the card shows the 2D scene instead. The other activities are still drawn in 2D.
+Walking and cycling are drawn as real 3D scenes: rounded 3D figures and objects with light, shadows and perspective. On the bench and at the selfie the couple turns to face you, at the beach they walk down to the water and sit facing the sea. The cyclist rides on a road with markings and roadside posts over real hills, with turning wheels and cranks, helmet and sunglasses. It needs WebGL, which current browsers and the Home Assistant app provide. Without WebGL the card shows the 2D scene instead. The other activities are still drawn in 2D.
 
 Forecast: [Open-Meteo](https://open-meteo.com/) DWD ICON model, no API key required.
 The animation pauses while the card is out of view and respects the system setting for reduced motion.
