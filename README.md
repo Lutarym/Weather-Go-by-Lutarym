@@ -1,6 +1,6 @@
 # Weather Go by Lutarym
 
-Version 1.1.0
+Version 1.2.0
 
 Lovelace custom card for Home Assistant: is the weather right for your activity today?
 
@@ -10,7 +10,7 @@ Each activity has its own animated scene, and the expected weather plays in it:
 |---|---|
 | `bike` | A ride with changing scenes: cruising, a sprint out of the saddle, a climb, a fast tucked descent, a stop for a drink from the bottle and an easy restart; the road follows the hills |
 | `running` | Runner on a path, with a natural running stride and flight phase |
-| `walking` | A couple, man and woman, walking hand in hand over gentle hills: he trips over a root, a dinosaur chases them (he runs off and leaves her behind, she turns round and tells it off until it shrinks and slinks away, then he comes back a little embarrassed), they rest on a bench where he nods off until she pokes him, they take a selfie, and at a beach they sit down in the sand, she leans her head on his shoulder and they watch a sailboat and a motorboat go by; with light rain he holds the umbrella over both |
+| `walking` | In real 3D: a couple, man and woman, walking hand in hand over gentle hills: he trips over a root, a dinosaur chases them (he runs off and leaves her behind, she turns round and tells it off until it shrinks and slinks away, then he comes back a little embarrassed), they rest on a bench where he nods off until she pokes him, they take a selfie, and at a beach they sit down in the sand, she leans her head on his shoulder and they watch a sailboat and a motorboat go by; with light rain he holds the umbrella over both |
 | `boating` | Motorboat on the water with a foam trail |
 | `sailing` | Sailboat heeling in the wind, sails filling |
 | `football` | Player shooting at a goal |
@@ -39,6 +39,10 @@ The walking couple has its own comedy: in a storm his toupee flies away, he cove
 Reactions fade in and out smoothly. The cyclist gets off the saddle and puts a foot down. For "Maybe" the effects are lighter and the figure keeps moving.
 
 The verdict and the values for rain, wind and temperature are shown inside the scene.
+
+## 3D
+
+Walking is drawn as a real 3D scene: rounded 3D figures and objects with light, shadows and perspective. On the bench and at the selfie the couple turns to face you, at the beach they walk down to the water and sit facing the sea. It needs WebGL, which current browsers and the Home Assistant app provide. Without WebGL the card shows the 2D scene instead. The other activities are still drawn in 2D.
 
 Forecast: [Open-Meteo](https://open-meteo.com/) DWD ICON model, no API key required.
 The animation pauses while the card is out of view and respects the system setting for reduced motion.
@@ -94,3 +98,7 @@ demo_interval: 20   # seconds between weather changes, 5 to 600
 The storm comedy of the cyclist takes about 17 seconds; use an interval of 18 seconds or more to see it in full.
 
 All options are also available in the visual editor. Languages: German and English.
+
+## Third-party software
+
+This card contains parts of [three.js](https://threejs.org) 0.186.1, MIT License, Copyright © 2010-2026 three.js authors.
